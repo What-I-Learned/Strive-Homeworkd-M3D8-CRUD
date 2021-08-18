@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <!--
+          
+            You are building the new Amazon.
+            This time you are also responsible for the back office.
+            THIS is you CRUD endpoint
+            https://striveschool-api.herokuapp.com/api/product/
+            The product model is 
+            {
+                "_id": "5d318e1a8541744830bef139", //SERVER GENERATED
+                "name": "app test 1",  //REQUIRED
+                "description": "somthing longer", //REQUIRED
+                "brand": "nokia", //REQUIRED
+                "imageUrl": "https://drop.ndtv.com/TECH/product_database/images/2152017124957PM_635_nokia_3310.jpeg?downsize=*:420&output-quality=80", //REQUIRED
+                "price": 100, //REQUIRED
+                "userId": "admin", //SERVER GENERATED
+                "createdAt": "2019-07-19T09:32:10.535Z", //SERVER GENERATED
+                "updatedAt": "2019-07-19T09:32:10.535Z", //SERVER GENERATED
+                "__v": 0 //SERVER GENERATED
+            }
+            #---------------------------------------------------------------#
+            EVERY REST API CALL SHOULD BE AUTHENTICATED. 
+            Every request to the API should use Token Based Authentication to secure access to the contents.
+            You can get your token by registering on: strive.school/studentlogin
+            Authorization: Bearer ###########
+            Where ######### is the access_token returned by the endpoint.
+            #---------------------------------------------------------------#
+            Today you have to implement:
+            - A backoffice page, where you can insert the product by specifying the parameters
+            - A front page, where the user can see the available products
+            ------ N.B. ------
+            Tokens duration is set to 14 days. Whenever you'll need to obtain a new one you can send the following request:
+            
+            POST https://striveschool-api.herokuapp.com/api/account/login
+            {
+                "username": "testusername@yourmail.com",
+                "password":"pass"
+            }   
+        -->
+
+    <div class="container my-5 border-bottom">
+      <ul class="nav nav-pills justify-content-start">
+        <li class="nav-item">
+          <a class="nav-link active" href="index.html">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="backoffice.html">Backoffice</a>
+        </li>
+      </ul>
+    </div>
+    <main>
+      <div class="container py-3 item-container"></div>
+    </main>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+    -->
+
+    <!-- my Script -->
+    <script src="script.js"></script>
+    <script>
+      window.onload = async () => {
+        const productData = await fetchProducst();
+        displayProducts(productData);
+      };
+
+      async function fetchProducst() {
+        const url = "https://striveschool-api.herokuapp.com/api/product/";
+
+        try {
+          const response = await fetch(url, {
+            metho: "GET",
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTFjZjk1ZTJkNTI2MjAwMTViNmRjOWQiLCJpYXQiOjE2MjkyODg3OTksImV4cCI6MTYzMDQ5ODM5OX0.EeK-W1gOGpy5jLHWLtKt7E-22YN0nnxLpUi_TvLLnV8",
+            },
+          });
+          if (response.ok) {
+            const productData = await response.json();
+            return productData;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      function displayProducts(data) {
+        const container = document.querySelector(".item-container");
+
+        data.forEach((product) => {
+          const productContainer = document.createElement("div");
+          productContainer.classList.add("card", "mb-3", "item-card");
+          productContainer.style.maxWidth = "540px";
+          productContainer.style.minWidth = "500px";
+          productContainer.innerHTML = `
+          <div class="row no-gutters">
+            <div class="col-md-4 item-image">
+              <img src="${product.imageUrl}" alt="${product.name}" class="img-fluid" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title item-name">${product.name}</h5>
+                <h6 class="card-title item-brand">by: ${product.brand}</h6>
+                <p class="card-text item-description">
+                  ${product.description}
+                </p>
+                <span class="badge badge-pill badge-dark item-price">${product.price} 💲</span>
+              </div>
+            </div>
+          </div>
+          `;
+
+          container.append(productContainer);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+.item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+.product-form {
+  min-width: 400px;
+  width: 100%;
+  max-width: 800px;
+}
+.item-image {
+  overflow: hidden;
+}
