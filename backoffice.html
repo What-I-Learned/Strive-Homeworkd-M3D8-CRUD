@@ -32,7 +32,7 @@
       </ul>
     </div>
     <main>
-      <div class="container py-3 px-5 product-form">
+      <div class="container py-3 px-5 product-form border-bottom">
         <form>
           <div class="form-group">
             <label for="product-name">Product Name</label>
@@ -40,6 +40,16 @@
               type="text"
               class="form-control"
               id="product-name"
+              aria-describedby="emailHelp"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product-brand">Brand</label>
+            <input
+              type="text"
+              class="form-control"
+              id="product-brand"
               aria-describedby="emailHelp"
               required
             />
@@ -63,16 +73,7 @@
               required
             />
           </div>
-          <div class="form-group">
-            <label for="product-brand">Brand</label>
-            <input
-              type="text"
-              class="form-control"
-              id="product-brand"
-              aria-describedby="emailHelp"
-              required
-            />
-          </div>
+
           <div class="form-group">
             <label for="product-imageUrl">Image</label>
             <input
@@ -86,6 +87,7 @@
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
+      <div class="container product-list py-3"></div>
     </main>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -114,6 +116,11 @@
       const productForm = document.querySelector(".product-form");
       productForm.addEventListener("submit", (event) => handleForm(event));
 
+      window.onload = async () => {
+        let productList = await getProductList();
+        displayProductList(productList);
+      };
+
       async function handleForm(event) {
         event.preventDefault();
         console.log("hello");
@@ -138,10 +145,78 @@
           });
           if (response.ok) {
             const respEvent = await response.json();
-            alert("Product adedd" + respEvent.name);
+            alert("Product aded" + respEvent.name);
           }
         } catch (err) {
           console.log(err);
+        }
+      }
+
+      async function getProductList() {
+        const url = "https://striveschool-api.herokuapp.com/api/product/";
+
+        try {
+          const response = await fetch(url, {
+            method: "Get",
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTFjZjk1ZTJkNTI2MjAwMTViNmRjOWQiLCJpYXQiOjE2MjkyODg3OTksImV4cCI6MTYzMDQ5ODM5OX0.EeK-W1gOGpy5jLHWLtKt7E-22YN0nnxLpUi_TvLLnV8",
+            },
+          });
+          if (response.ok) {
+            const respEvent = await response.json();
+            console.log(respEvent);
+            displayProductList(respEvent);
+            return respEvent;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      function displayProductList(data) {
+        const productList = document.querySelector(".product-list");
+        productList.innerHTML = ``;
+        if (data.length > 1) {
+          data.forEach((element) => {
+            let product = document.createElement("div");
+            product.classList.add("card", "product-card", "mx-2");
+
+            product.innerHTML = `<ul class="list-group list-group-flush">
+            <li class="list-group-item ">${element.name}</li>
+            <li class="list-group-item element-id">${element._id}</li>
+            <a href="#" class="btn btn-danger" onclick="deleteItem(this.parentNode.querySelector('.element-id').innerText)">Delete</a>
+          </ul>`;
+            productList.append(product);
+          });
+        } else {
+          let product = document.createElement("div");
+          product.classList.add("card", "product-card", "mx-2");
+
+          product.innerHTML = `<ul class="list-group list-group-flush">
+            <li class="list-group-item ">${data[0].name}</li>
+            <li class="list-group-item element-id">${data[0]._id}</li>
+            <a href="#" class="btn btn-danger" onclick="deleteItem(this.parentNode.querySelector('.element-id').innerText)">Delete</a>
+          </ul>`;
+          productList.append(product);
+        }
+      }
+
+      async function deleteItem(id) {
+        const url = `https://striveschool-api.herokuapp.com/api/product/${id}`;
+        const response = await fetch(url, {
+          method: "DELETE",
+          // body: JSON.stringify(product),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTFjZjk1ZTJkNTI2MjAwMTViNmRjOWQiLCJpYXQiOjE2MjkyODg3OTksImV4cCI6MTYzMDQ5ODM5OX0.EeK-W1gOGpy5jLHWLtKt7E-22YN0nnxLpUi_TvLLnV8",
+          },
+          body: null,
+        });
+        if (response.ok) {
+          const data = await response.json();
+          displayProductList(data);
         }
       }
     </script>

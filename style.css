@@ -13,3 +13,10 @@
 .item-image {
   overflow: hidden;
 }
+.product-list {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
